@@ -50,14 +50,14 @@ nullspace = MixedVectorSpaceBasis(
 from firedrake.petsc import PETSc
 
 f = open("convection_outputs.txt", "w+")
-f.write("Ra, Pr, Nu\n")
+f.write("log10Ra, log10Pr, log10Nu\n")
 
 for j in range (1,5):
    Pr.assign(10**(-2+(j-1)/2))
 
    print("starting log10 Pr = "+str(float(math.log10(Pr)))+" series ...")
    # reset fields: THIS ISN'T WORKING
-   u = interpolate(as_vector([0.0*x, 0.0*x]), V)
+   u = interpolate(as_vector([0.0*x, 0.0*x]), V)  #DO I HAVE TO USE constant(...) IF x OR y IS NOT IN THE EXPRESSION?
    p = interpolate(0.0*x, W)
    T = interpolate(1.0-x ,Q)
    # does this help: NO
@@ -84,7 +84,7 @@ for j in range (1,5):
       normR = Function(V)
       normR = Constant((1.0,0.0))
       fluxR = assemble(inner(normR, grad(T))*ds(12))   
-      f.write(str(i/10)+", "+str(-2+(j-1)/2)+", "+str(math.log10(abs(0.5*(fluxL-fluxR))))+"\n")
+      f.write(str(float(math.log10(Ra)))+", "+str(float(math.log10(Pr)))+", "+str(math.log10(abs(0.5*(fluxL-fluxR))))+"\n")
       print("finished run with log10 Ra "+str(float(math.log10(Ra)))+" and log10 Pr "+str(float(math.log10(Pr))))
 
 f.close()
